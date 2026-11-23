@@ -20,6 +20,8 @@ LIMIT = 200
 def check(text):
     if not text or text.isspace():
         return "entry is empty"
+    if not text.isascii():
+        return "entry must be ASCII"
     if len(text) > LIMIT:
         return f"entry is {len(text)} chars, over the {LIMIT} limit"
     if "\n" in text or "\r" in text:
@@ -35,6 +37,11 @@ def run():
     os.makedirs(os.path.dirname(TARGET), exist_ok=True)
     with open(TARGET, "w", encoding="utf-8") as handle:
         handle.write(POWER)
+    with open(TARGET, "r", encoding="utf-8") as handle:
+        written = handle.read()
+    if written != POWER:
+        print("bad entry: file content does not match the entry", file=sys.stderr)
+        raise SystemExit(1)
     print(f"wrote {len(POWER)} chars to {TARGET}")
 
 
